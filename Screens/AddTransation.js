@@ -1,4 +1,5 @@
 import { useState } from "react";
+import * as SQLite from "expo-sqlite";
 import {
   StyleSheet,
   Text,
@@ -8,19 +9,28 @@ import {
   SafeAreaView,
 } from "react-native";
 import dayjs from "dayjs";
+import db from "../App";
 
 export const AddTransaction = ({ navigation }) => {
   const [amount, setAmount] = useState(null);
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
 
-  const saveTransaction = () => {
+  const setTransaction = async () => {
     const date = dayjs();
-    console.log("amount : ", amount);
-    console.log("type : ", type);
-    console.log("description : ", description);
-    console.log("date : ", date);
-    navigation.navigate("Home");
+    if (amount.length != 0 && type.length != 0 && description.length != 0) {
+      try {
+        await db.transaction(async (tx) => {
+          await tx.executeSql(
+            "INSERT INTO transaction (amount, type, description) VALUES (?, ?, ?, ?);",
+            [amount, type, description, date]
+          );
+        });
+        navigation.navigate("Home");
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
@@ -55,7 +65,7 @@ export const AddTransaction = ({ navigation }) => {
         </View>
       </View>
       <View>
-        <Pressable style={styles.btnField} onPress={saveTransaction}>
+        <Pressable style={styles.btnField} onPress={setTransaction()}>
           <Text style={styles.btnText}>Terminer</Text>
         </Pressable>
       </View>
