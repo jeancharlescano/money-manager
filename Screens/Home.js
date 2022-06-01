@@ -13,7 +13,7 @@ import { Transaction } from "../components/Transaction";
 export const Home = ({ navigation }) => {
   const balance = "999,99";
 
-  const addTransaction = () => {
+  const goToAddTransaction = () => {
     console.log("toto");
     navigation.navigate("Transaction");
   };
@@ -27,7 +27,7 @@ export const Home = ({ navigation }) => {
         <Pressable
           style={[{ backgroundColor: "#e5e5e5" }, styles.transaction]}
           onPress={() => {
-            addTransaction();
+            goToAddTransaction();
           }}
         >
           <Text style={styles.txtTransaction}>transaction</Text>
