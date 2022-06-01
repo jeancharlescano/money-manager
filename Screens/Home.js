@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 
 import { Transaction } from "../components/Transaction";
+import { db } from "../config/database";
 
 export const Home = ({ navigation }) => {
   const balance = "999,99";
@@ -18,6 +20,31 @@ export const Home = ({ navigation }) => {
     console.log("travelling");
     navigation.navigate("Transaction");
   };
+
+  const getTx = async () => {
+    try {
+      await db.transaction(async (tx) => {
+        await tx.executeSql(
+          `SELECT * FROM transaction ORDER BY id DESC`,
+          [],
+          (sqlTx, res) => {
+            console.log("transaction retrived successfully");
+            let txs = res.rows;
+            console.log(
+              "🚀 ~ file: Home.js ~ line 32 ~ awaitdb.transaction ~ txs",
+              txs
+            );
+          }
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  useEffect(() => {
+    getTx();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -17,21 +17,18 @@ export const AddTransaction = ({ navigation }) => {
 
   const insertTx = async () => {
     const date = dayjs();
-    console.log("newTx");
-    await db.transaction(async (tx) => {
-      try {
-        await db.transaction(async (tx) => {
-          await tx.executeSql(
-            "INSERT INTO transaction (amount, type, description, date) VALUES (?, ?, ?, ?);",
-            [amount, type, description, date]
-          );
-        });
-        console.log("tx added");
-        navigation.goBack();
-      } catch (error) {
-        console.log(error);
-      }
-    });
+    try {
+      await db.transaction(async (tx) => {
+        await tx.executeSql(
+          "INSERT INTO transaction (amount, type, description, date) VALUES (?, ?, ?, ?);",
+          [amount, type, description, date]
+        );
+      });
+      console.log("tx added");
+      navigation.goBack();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
