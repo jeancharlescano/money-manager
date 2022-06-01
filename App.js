@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 
-import { AddTransaction } from "./screens/AddTransation";
+import { AddTransaction } from "./screens/AddTransaction";
 import { Home } from "./screens/Home";
 
 const Stack = createNativeStackNavigator();
