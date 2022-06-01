@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Pressable,
   ScrollView,
+  Dimensions,
 } from "react-native";
 
 import { Transaction } from "../components/Transaction";
@@ -14,7 +15,7 @@ export const Home = ({ navigation }) => {
   const balance = "999,99";
 
   const goToAddTransaction = () => {
-    console.log("toto");
+    console.log("travelling");
     navigation.navigate("Transaction");
   };
 
@@ -57,17 +58,25 @@ export const Home = ({ navigation }) => {
   );
 };
 
+const size = {
+  fullHeight: Dimensions.get("screen").height,
+  fullWidth: Dimensions.get("screen").width,
+};
+
 const styles = StyleSheet.create({
   container: {
+    height: size.fullHeight,
+    width: size.fullWidth,
     flex: 1,
     backgroundColor: "#F2F2F2",
     alignItems: "center",
+    paddingTop: 10,
   },
 
   balanceContainer: {
     justifyContent: "center",
     alignItems: "center",
-    width: 380,
+    width: size.fullWidth,
     height: 200,
     backgroundColor: "#0093FE",
     borderColor: "white",

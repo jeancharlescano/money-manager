@@ -8,11 +8,31 @@ import {
   SafeAreaView,
 } from "react-native";
 import dayjs from "dayjs";
+import { db } from "../config/database";
 
 export const AddTransaction = ({ navigation }) => {
   const [amount, setAmount] = useState(null);
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
+
+  const insertTx = async () => {
+    const date = dayjs();
+    console.log("newTx");
+    await db.transaction(async (tx) => {
+      try {
+        await db.transaction(async (tx) => {
+          await tx.executeSql(
+            "INSERT INTO transaction (amount, type, description, date) VALUES (?, ?, ?, ?);",
+            [amount, type, description, date]
+          );
+        });
+        console.log("tx added");
+        navigation.goBack();
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,7 +66,7 @@ export const AddTransaction = ({ navigation }) => {
         </View>
       </View>
       <View>
-        <Pressable style={styles.btnField}>
+        <Pressable style={styles.btnField} onPress={insertTx}>
           <Text style={styles.btnText}>Terminer</Text>
         </Pressable>
       </View>
