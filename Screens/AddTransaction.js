@@ -20,12 +20,12 @@ export const AddTransaction = ({ navigation }) => {
     try {
       await db.transaction(async (tx) => {
         await tx.executeSql(
-          "INSERT INTO transaction (amount, type, description, date) VALUES (?, ?, ?, ?);",
+          "INSERT INTO transactions (amount, type, description, date) VALUES (?, ?, ?, ?);",
           [amount, type, description, date]
         );
       });
       console.log("tx added");
-      navigation.goBack();
+      navigation.navigate('Home');
     } catch (error) {
       console.log(error);
     }

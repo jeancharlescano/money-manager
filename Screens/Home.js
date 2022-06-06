@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/core";
+
 import {
   FlatList,
   StyleSheet,
@@ -14,6 +16,7 @@ import { Transaction } from "../components/Transaction";
 import { db } from "../config/database";
 
 export const Home = ({ navigation }) => {
+  const [operations, setOperations] = useState([]);
   const balance = "999,99";
 
   const goToAddTransaction = () => {
@@ -21,30 +24,35 @@ export const Home = ({ navigation }) => {
     navigation.navigate("Transaction");
   };
 
-  const getTx = async () => {
-    try {
-      await db.transaction(async (tx) => {
-        await tx.executeSql(
-          `SELECT * FROM transaction ORDER BY id DESC`,
-          [],
-          (sqlTx, res) => {
-            console.log("transaction retrived successfully");
-            let txs = res.rows;
-            console.log(
-              "🚀 ~ file: Home.js ~ line 32 ~ awaitdb.transaction ~ txs",
-              txs
-            );
+  const getTx = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `SELECT amount, type, description, date FROM transactions ORDER BY id DESC`,
+        null,
+        (sqlTx, res) => {
+          console.log("transactions retrived successfully");
+          const results = [];
+          const len = res.rows.length;
+          for (let i = 0; i < len; i++) {
+            const item = res.rows.item(i);
+            results.push({
+              amount: item.amount,
+              type: item.type,
+              description: item.description,
+              date: item.date,
+            });
           }
-        );
-      });
-    } catch (error) {
-      console.log(error);
-    }
+          setOperations(results);
+          console.log(operations);
+        },
+        (sqlTx, error) => console.log("error: ", error)
+      );
+    });
   };
-  
-  useEffect(() => {
+
+  useFocusEffect(() => {
     getTx();
-  }, []);
+  });
 
   return (
     <SafeAreaView style={styles.container}>

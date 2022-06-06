@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -14,22 +14,22 @@ import {
 import { AddTransaction } from "./screens/AddTransaction";
 import { Home } from "./screens/Home";
 import { db } from "./config/database";
-
+import { get } from "react-native/Libraries/Utilities/PixelRatio";
 
 const Stack = createNativeStackNavigator();
 
 export default function App({ navigation }) {
   const createTable = async () => {
-    await db.transaction(async (tx) => {
-      try {
+    try {
+      await db.transaction(async (tx) => {
         await tx.executeSql(
-          "CREATE TABLE IF NOT EXISTS transaction (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, type VARCHAR(50), description VARCHAR(255), date TEXT)"
+          "CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, type VARCHAR(50), description VARCHAR(255), date TEXT)"
         );
         console.log("✔ Table Created ✔");
-      } catch (error) {
-        console.log(error);
-      }
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -52,4 +52,3 @@ export default function App({ navigation }) {
 }
 
 const styles = StyleSheet.create({});
-
