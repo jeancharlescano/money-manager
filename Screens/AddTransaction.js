@@ -16,7 +16,7 @@ export const AddTransaction = ({ navigation }) => {
   const [description, setDescription] = useState("");
 
   const insertTx = async () => {
-    const date = dayjs();
+    const date = dayjs().format("DD/MM/YYYY");
     try {
       await db.transaction(async (tx) => {
         await tx.executeSql(
@@ -25,7 +25,7 @@ export const AddTransaction = ({ navigation }) => {
         );
       });
       console.log("tx added");
-      navigation.navigate('Home');
+      navigation.navigate("Home");
     } catch (error) {
       console.log(error);
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/core";
 
 import {
@@ -25,34 +25,47 @@ export const Home = ({ navigation }) => {
   };
 
   const getTx = () => {
+    let txResult;
     db.transaction((tx) => {
       tx.executeSql(
         `SELECT amount, type, description, date FROM transactions ORDER BY id DESC`,
         null,
-        (sqlTx, res) => {
-          console.log("transactions retrived successfully");
-          const results = [];
-          const len = res.rows.length;
-          for (let i = 0; i < len; i++) {
-            const item = res.rows.item(i);
-            results.push({
-              amount: item.amount,
-              type: item.type,
-              description: item.description,
-              date: item.date,
-            });
-          }
-          setOperations(results);
-          console.log(operations);
+        (sqlTx, { rows }) => {
+          txResult = JSON.stringify(rows._array);
+          console.log("🚀 ~ file: Home.js ~ line 36 ~ db.transaction ~ txResult", txResult)
+          setOperations(txResult);
         },
+        // (sqlTx, { rows: { _array } }) => {
+        //   console.log("transactions retrived successfully");
+        //   results = { data: { _array } };
+        //   console.log("query result : ", results.data._array[0]);
+        //   return results
+        // },
         (sqlTx, error) => console.log("error: ", error)
       );
     });
   };
 
-  useFocusEffect(() => {
-    getTx();
-  });
+  const deleteTx = () => {
+    db.transaction((tx) => {
+      tx.executeSql("DELETE FROM transactions"),
+        (req, res) => {
+          const results = res.rows;
+          setOperations(results);
+          console.log(operations);
+        },
+        (error) => console.log(error);
+    });
+  };
+
+  const transaction = () => {};
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getTx();
+      console.log(operations);
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,29 +82,11 @@ export const Home = ({ navigation }) => {
           <Text style={styles.txtTransaction}>transaction</Text>
         </Pressable>
       </View>
-      <ScrollView style={styles.list}>
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-        <Transaction />
-      </ScrollView>
+      <ScrollView style={styles.list}>{transaction()}</ScrollView>
     </SafeAreaView>
   );
 };
+  console.log("🚀 ~ file: Home.js ~ line 89 ~ Home ~ txResult", txResult)
 
 const size = {
   fullHeight: Dimensions.get("screen").height,

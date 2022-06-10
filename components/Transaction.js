@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 
-export const Transaction = () => {
+export const Transaction = (transaction) => {
   return (
     <View style={styles.transactionListContainer}>
       <Text style={styles.dateTxt}>23/05/2022</Text>
