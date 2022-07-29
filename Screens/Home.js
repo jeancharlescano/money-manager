@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useFocusEffect } from "@react-navigation/core";
 
 import {
   FlatList,
@@ -14,37 +13,31 @@ import {
 
 import { Transaction } from "../components/Transaction";
 import { db } from "../config/database";
+import { getTx } from "../utilities/transaction";
 
 export const Home = ({ navigation }) => {
-  const [operations, setOperations] = useState([]);
+  let data = [];
   const balance = "999,99";
+  const [operations, setOperations] = useState([]);
 
-  const goToAddTransaction = () => {
-    console.log("travelling");
-    navigation.navigate("Transaction");
+  const init = async () => {
+    data = await getTx();
+    console.log("🚀 ~ file: Home.js ~ line 25 ~ init ~ data", data);
   };
 
-  const getTx = () => {
-    let txResult;
-    db.transaction((tx) => {
-      tx.executeSql(
-        `SELECT amount, type, description, date FROM transactions ORDER BY id DESC`,
-        null,
-        (sqlTx, { rows }) => {
-          txResult = JSON.stringify(rows._array);
-          console.log("🚀 ~ file: Home.js ~ line 36 ~ db.transaction ~ txResult", txResult)
-          setOperations(txResult);
-        },
-        // (sqlTx, { rows: { _array } }) => {
-        //   console.log("transactions retrived successfully");
-        //   results = { data: { _array } };
-        //   console.log("query result : ", results.data._array[0]);
-        //   return results
-        // },
-        (sqlTx, error) => console.log("error: ", error)
-      );
-    });
+  const loadTransaction = () => {
+    return data.map((operation) => <Transaction name={operation} />);
+    // let result;
+
+    // for (const transaction of data) {
+    //   result = <Transaction name={transaction} />;
+    //   return result;
+    // }
   };
+
+  useEffect(() => {
+    init();
+  }, []);
 
   const deleteTx = () => {
     db.transaction((tx) => {
@@ -58,14 +51,10 @@ export const Home = ({ navigation }) => {
     });
   };
 
-  const transaction = () => {};
-
-  useFocusEffect(
-    React.useCallback(() => {
-      getTx();
-      console.log(operations);
-    }, [])
-  );
+  const goToAddTransaction = () => {
+    console.log("travelling");
+    navigation.navigate("Transaction");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,11 +71,10 @@ export const Home = ({ navigation }) => {
           <Text style={styles.txtTransaction}>transaction</Text>
         </Pressable>
       </View>
-      <ScrollView style={styles.list}>{transaction()}</ScrollView>
+      <ScrollView style={styles.list}>{loadTransaction()}</ScrollView>
     </SafeAreaView>
   );
 };
-  console.log("🚀 ~ file: Home.js ~ line 89 ~ Home ~ txResult", txResult)
 
 const size = {
   fullHeight: Dimensions.get("screen").height,

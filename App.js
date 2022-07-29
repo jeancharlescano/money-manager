@@ -14,7 +14,6 @@ import {
 import { AddTransaction } from "./screens/AddTransaction";
 import { Home } from "./screens/Home";
 import { db } from "./config/database";
-import { get } from "react-native/Libraries/Utilities/PixelRatio";
 
 const Stack = createNativeStackNavigator();
 

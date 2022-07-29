@@ -15,11 +15,11 @@ export const AddTransaction = ({ navigation }) => {
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
 
-  const insertTx = async () => {
+  const insertTx = () => {
     const date = dayjs().format("DD/MM/YYYY");
     try {
-      await db.transaction(async (tx) => {
-        await tx.executeSql(
+      db.transaction((tx) => {
+        tx.executeSql(
           "INSERT INTO transactions (amount, type, description, date) VALUES (?, ?, ?, ?);",
           [amount, type, description, date]
         );

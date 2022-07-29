@@ -1,14 +1,11 @@
-import { useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 
 export const Transaction = (transaction) => {
+  console.log(
+    "🚀 ~ file: Transaction.js ~ line 4 ~ Transaction ~ transaction",
+    transaction
+  );
+  
   return (
     <View style={styles.transactionListContainer}>
       <Text style={styles.dateTxt}>23/05/2022</Text>
@@ -17,6 +14,9 @@ export const Transaction = (transaction) => {
         <Text style={styles.transacTxt}>achat de pizza</Text>
       </View>
       <Text style={styles.transacType}>Carte</Text>
+      <Pressable>
+        <Text>Toto</Text>
+      </Pressable>
     </View>
   );
 };
