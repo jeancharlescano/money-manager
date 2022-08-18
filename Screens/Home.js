@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useState, useCallback  } from "react";
 
 import {
-  FlatList,
   StyleSheet,
   Text,
   View,
@@ -16,28 +16,31 @@ import { db } from "../config/database";
 import { getTx } from "../utilities/transaction";
 
 export const Home = ({ navigation }) => {
-  let data = [];
-  const balance = "999,99";
   const [operations, setOperations] = useState([]);
+  const balance = "999,99";
 
   const init = async () => {
-    data = await getTx();
-    console.log("🚀 ~ file: Home.js ~ line 25 ~ init ~ data", data);
+    const data = await getTx();
+    console.log("🚀 ~ file: Home.js ~ line 24 ~ init ~ data", data);
+    setOperations(data);
   };
 
-  const loadTransaction = () => {
-    return data.map((operation) => <Transaction name={operation} />);
-    // let result;
+  // const loadTransaction = () => {
+  //     console.log('toto:', operations);
+  //     return operations.map((operation) => (
+  //       <Transaction transaction={operation} />
+  //     ));
 
-    // for (const transaction of data) {
-    //   result = <Transaction name={transaction} />;
-    //   return result;
-    // }
-  };
+  //   //   return operations.map((operation) => {
+  //   //     console.log(operation);
+  //   //   });
+  // };
 
-  useEffect(() => {
-    init();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      init();
+    }, [])
+  );
 
   const deleteTx = () => {
     db.transaction((tx) => {
@@ -71,7 +74,11 @@ export const Home = ({ navigation }) => {
           <Text style={styles.txtTransaction}>transaction</Text>
         </Pressable>
       </View>
-      <ScrollView style={styles.list}>{loadTransaction()}</ScrollView>
+      <ScrollView style={styles.list}>
+        {operations.map((operation) => (
+          <Transaction transaction={operation} />
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -2,13 +2,7 @@ import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
-  FlatList,
   StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Pressable,
-  ScrollView,
 } from "react-native";
 
 import { AddTransaction } from "./screens/AddTransaction";

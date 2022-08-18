@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 
-export const Transaction = (transaction) => {
+export const Transaction = ({transaction}) => {
   console.log(
     "🚀 ~ file: Transaction.js ~ line 4 ~ Transaction ~ transaction",
     transaction
@@ -8,15 +8,12 @@ export const Transaction = (transaction) => {
   
   return (
     <View style={styles.transactionListContainer}>
-      <Text style={styles.dateTxt}>23/05/2022</Text>
+      <Text style={styles.dateTxt}>{transaction.date}</Text>
       <View style={styles.transacDesc}>
-        <Text style={styles.priceTxt}>-20,50</Text>
-        <Text style={styles.transacTxt}>achat de pizza</Text>
+        <Text style={styles.priceTxt}>{transaction.amount} €</Text>
+        <Text style={styles.transacTxt}>{transaction.description}</Text>
       </View>
-      <Text style={styles.transacType}>Carte</Text>
-      <Pressable>
-        <Text>Toto</Text>
-      </Pressable>
+      <Text style={styles.transacType}>{transaction.type}</Text>
     </View>
   );
 };
