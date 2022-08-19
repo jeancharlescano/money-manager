@@ -7,24 +7,28 @@ import {
   View,
   SafeAreaView,
 } from "react-native";
+import { RadioButton } from "react-native-paper";
 import dayjs from "dayjs";
+
 import { db } from "../config/database";
 
 export const AddTransaction = ({ navigation }) => {
-  const [amount, setAmount] = useState(null);
+  const [amount, setAmount] = useState(0);
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
+  const [txType, setTxType] = useState(0);
 
   const insertTx = () => {
     const date = dayjs().format("DD/MM/YYYY");
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          "INSERT INTO transactions (amount, type, description, date) VALUES (?, ?, ?, ?);",
-          [amount, type, description, date]
+          "INSERT INTO transactions (amount, payment_type, description, date, tx_type) VALUES (?, ?, ?, ?, ?);",
+          [amount, type, description, date, txType]
         );
       });
       console.log("tx added");
+      // storeData(amount);
       navigation.navigate("Home");
     } catch (error) {
       console.log(error);
@@ -39,7 +43,10 @@ export const AddTransaction = ({ navigation }) => {
           <TextInput
             style={styles.formInput}
             placeholder="Saisir le montant"
-            onChangeText={(value) => setAmount(value)}
+            onChangeText={(value) => {
+              console.log(amount);
+              setAmount(value);
+            }}
             keyboardType="numeric"
           />
         </View>
@@ -60,6 +67,28 @@ export const AddTransaction = ({ navigation }) => {
             blurOnSubmit
             onChangeText={(value) => setDescription(value)}
           />
+        </View>
+        <View style={styles.txTypeForm}>
+          <View style={styles.txTypeBtn}>
+            <Pressable onPress={() => setTxType(0)}>
+              <Text style={styles.txTypeText}>Achat</Text>
+            </Pressable>
+            <RadioButton
+              value="toto"
+              status={txType === 0 ? "checked" : "unchecked"}
+              onPress={() => setTxType(0)}
+            />
+          </View>
+          <View style={styles.txTypeBtn}>
+            <Text style={styles.txTypeText} onPress={() => setTxType(1)}>
+              Gain
+            </Text>
+            <RadioButton
+              value="1"
+              status={txType === 1 ? "checked" : "unchecked"}
+              onPress={() => setTxType(1)}
+            />
+          </View>
         </View>
       </View>
       <View>
@@ -82,6 +111,10 @@ const styles = StyleSheet.create({
   form: {
     width: 380,
     alignItems: "center",
+  },
+
+  montantForm: {
+    marginBottom: 10,
   },
 
   formTxt: {
@@ -110,11 +143,28 @@ const styles = StyleSheet.create({
     borderColor: "#0093FE",
     marginLeft: 10,
     fontSize: 15,
-    // textAlignVertical: "top",
+    padding: 8
   },
 
-  montantForm: {
-    marginBottom: 10,
+  txTypeForm: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    paddingTop: 8,
+    width: 350,
+  },
+
+  txTypeBtn: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+
+  txTypeText: {
+    fontWeight: "bold",
+    color: "#0093FE",
+    fontSize: 15,
   },
 
   btnField: {

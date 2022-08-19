@@ -6,14 +6,10 @@ export const getTx = async () => {
     try {
       db.transaction((tx) => {
         tx.executeSql(
-          `SELECT amount, type, description, date FROM transactions ORDER BY id DESC`,
+          `SELECT * FROM transactions ORDER BY id DESC`,
           [],
           (sqlTx, { rows }) => {
             result = rows._array;
-            console.log(
-              "🚀 ~ file: transaction.js ~ line 12 ~ db.transaction ~ result",
-              result
-            );
             resolve(result);
           }
         );
@@ -25,3 +21,4 @@ export const getTx = async () => {
   });
   // return result;
 };
+

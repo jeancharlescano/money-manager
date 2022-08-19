@@ -1,6 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState, useCallback  } from "react";
-
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,35 +11,36 @@ import {
 } from "react-native";
 
 import { Transaction } from "../components/Transaction";
-import { db } from "../config/database";
 import { getTx } from "../utilities/transaction";
+import { db } from "../config/database";
 
 export const Home = ({ navigation }) => {
   const [operations, setOperations] = useState([]);
-  const balance = "999,99";
+  const [balance, setBalance] = useState();
+  let incrBalance = 0;
 
-  const init = async () => {
-    const data = await getTx();
-    console.log("🚀 ~ file: Home.js ~ line 24 ~ init ~ data", data);
-    setOperations(data);
+  const goToAddTransaction = () => {
+    console.log("travelling");
+    navigation.navigate("Transaction");
   };
 
-  // const loadTransaction = () => {
-  //     console.log('toto:', operations);
-  //     return operations.map((operation) => (
-  //       <Transaction transaction={operation} />
-  //     ));
+  const init = async () => {
+    const datas = await getTx();
 
-  //   //   return operations.map((operation) => {
-  //   //     console.log(operation);
-  //   //   });
-  // };
+    for (const data of datas) {
+      console.log(data.amount);
+      data.tx_type === 0
+        ? (incrBalance = incrBalance - data.amount)
+        : (incrBalance = incrBalance + data.amount);
+    }
 
-  useFocusEffect(
-    useCallback(() => {
-      init();
-    }, [])
-  );
+    console.log(
+      "🚀 ~ file: Home.js ~ line 33 ~ init ~ incrBalance",
+      incrBalance
+    );
+    setOperations(datas);
+    setBalance(incrBalance);
+  };
 
   const deleteTx = () => {
     db.transaction((tx) => {
@@ -54,10 +54,12 @@ export const Home = ({ navigation }) => {
     });
   };
 
-  const goToAddTransaction = () => {
-    console.log("travelling");
-    navigation.navigate("Transaction");
-  };
+  useFocusEffect(
+    useCallback(() => {
+      init();
+      // deleteTx();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>

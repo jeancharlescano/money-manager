@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -16,7 +16,7 @@ export default function App({ navigation }) {
     try {
       await db.transaction(async (tx) => {
         await tx.executeSql(
-          "CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, type VARCHAR(50), description VARCHAR(255), date TEXT)"
+          "CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount NUMERIC, payment_type VARCHAR(50), description VARCHAR(255), date TEXT, tx_type INTEGER);"
         );
         console.log("✔ Table Created ✔");
       });
