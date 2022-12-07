@@ -9,29 +9,28 @@ import {
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import dayjs from "dayjs";
-
-import { db } from "../config/database";
+import { createTx } from "../utilities/transaction";
 
 export const AddTransaction = ({ navigation }) => {
   const [amount, setAmount] = useState(0);
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
-  const [txType, setTxType] = useState(0);
+  const [txType, setTxType] = useState(false);
 
-  const insertTx = () => {
+  const insertTx = async () => {
     const date = dayjs().format("DD/MM/YYYY");
+    let transaction = {
+      amount: amount,
+      isEarning: txType,
+      paymentType: type.toLowerCase(),
+      description: description,
+      date: date,
+    };
     try {
-      db.transaction((tx) => {
-        tx.executeSql(
-          "INSERT INTO transactions (amount, payment_type, description, date, tx_type) VALUES (?, ?, ?, ?, ?);",
-          [amount, type, description, date, txType]
-        );
-      });
-      console.log("tx added");
-      // storeData(amount);
+      await createTx(transaction);
       navigation.navigate("Home");
     } catch (error) {
-      console.log(error);
+      console.log("🚀 ~ file: AddTransaction.js:36 ~ insertTx ~ error", error);
     }
   };
 
@@ -44,8 +43,11 @@ export const AddTransaction = ({ navigation }) => {
             style={styles.formInput}
             placeholder="Saisir le montant"
             onChangeText={(value) => {
-              console.log(amount);
               setAmount(value);
+              console.log(
+                "🚀 ~ file: AddTransaction.js:43 ~ AddTransaction ~ amount",
+                amount
+              );
             }}
             keyboardType="numeric"
           />
@@ -55,7 +57,13 @@ export const AddTransaction = ({ navigation }) => {
           <TextInput
             style={styles.formInput}
             placeholder="Saisir type de paiement"
-            onChangeText={(value) => setType(value)}
+            onChangeText={(value) => {
+              setType(value);
+              console.log(
+                "🚀 ~ file: AddTransaction.js:55 ~ AddTransaction ~ type",
+                type
+              );
+            }}
           />
         </View>
         <View style={styles.montantForm}>
@@ -65,28 +73,46 @@ export const AddTransaction = ({ navigation }) => {
             placeholder="Saisir la description"
             multiline
             blurOnSubmit
-            onChangeText={(value) => setDescription(value)}
+            onChangeText={(value) => {
+              setDescription(value);
+              console.log(
+                "🚀 ~ file: AddTransaction.js:66 ~ AddTransaction ~ Description",
+                description
+              );
+            }}
           />
         </View>
         <View style={styles.txTypeForm}>
           <View style={styles.txTypeBtn}>
-            <Pressable onPress={() => setTxType(0)}>
+            <Pressable onPress={() => setTxType(false)}>
               <Text style={styles.txTypeText}>Achat</Text>
             </Pressable>
             <RadioButton
               value="toto"
-              status={txType === 0 ? "checked" : "unchecked"}
-              onPress={() => setTxType(0)}
+              status={txType === false ? "checked" : "unchecked"}
+              onPress={() => {
+                setTxType(false);
+                console.log(
+                  "🚀 ~ file: AddTransaction.js:85 ~ AddTransaction ~ txType",
+                  txType
+                );
+              }}
             />
           </View>
           <View style={styles.txTypeBtn}>
-            <Text style={styles.txTypeText} onPress={() => setTxType(1)}>
+            <Text style={styles.txTypeText} onPress={() => setTxType(true)}>
               Gain
             </Text>
             <RadioButton
               value="1"
-              status={txType === 1 ? "checked" : "unchecked"}
-              onPress={() => setTxType(1)}
+              status={txType === true ? "checked" : "unchecked"}
+              onPress={() => {
+                setTxType(true);
+                console.log(
+                  "🚀 ~ file: AddTransaction.js:97 ~ AddTransaction ~ txType",
+                  txType
+                );
+              }}
             />
           </View>
         </View>
@@ -143,7 +169,7 @@ const styles = StyleSheet.create({
     borderColor: "#0093FE",
     marginLeft: 10,
     fontSize: 15,
-    padding: 8
+    padding: 8,
   },
 
   txTypeForm: {

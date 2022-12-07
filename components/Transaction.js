@@ -1,28 +1,23 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 
 export const Transaction = ({ transaction }) => {
-
-  const priceTxt = () => {
-    if (transaction.tx_type === 1) {
-      return (
-        <Text style={[styles.priceTxt, { color: "green" }]}>
-          {transaction.amount} €
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={[styles.priceTxt, { color: "red" }]}>
-          {transaction.amount} €
-        </Text>
-      );
-    }
-  };
-
   return (
     <View style={styles.transactionListContainer}>
       <Text style={styles.dateTxt}>{transaction.date}</Text>
       <View style={styles.transacDesc}>
-        {priceTxt()}
+        {transaction.is_earning === true ? (
+          <>
+            <Text style={[styles.priceTxt, { color: "green" }]}>
+              {transaction.amount} €
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text style={[styles.priceTxt, { color: "red" }]}>
+              {transaction.amount} €
+            </Text>
+          </>
+        )}
         <Text style={styles.transacTxt}>{transaction.description}</Text>
       </View>
       <Text style={styles.transacType}>{transaction.payment_type}</Text>

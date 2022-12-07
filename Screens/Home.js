@@ -1,5 +1,5 @@
 import { useFocusEffect } from "@react-navigation/native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,60 +11,43 @@ import {
 } from "react-native";
 
 import { Transaction } from "../components/Transaction";
-import { getTx } from "../utilities/transaction";
-import { db } from "../config/database";
+import { getAllTx } from "../utilities/transaction";
 
 export const Home = ({ navigation }) => {
   const [operations, setOperations] = useState([]);
   const [balance, setBalance] = useState();
-  let incrBalance = 0;
 
   const goToAddTransaction = () => {
-    console.log("travelling");
     navigation.navigate("Transaction");
   };
 
-  const init = async () => {
-    const datas = await getTx();
-
-    for (const data of datas) {
-      console.log(data.amount);
-      data.tx_type === 0
-        ? (incrBalance = incrBalance - data.amount)
-        : (incrBalance = incrBalance + data.amount);
+  const getAllTransactions = async () => {
+    const transactions = await getAllTx();
+    console.log("🚀 ~ file: Home.js:28 ~ getAllTransactions ~ transactions", transactions);
+    let incrBalance = 0;
+    for (const transaction of transactions) {
+      console.log(transaction.amount);
+      transaction.is_earning === false
+        ? (incrBalance -= transaction.amount)
+        : (incrBalance += transaction.amount);
     }
-
-    console.log(
-      "🚀 ~ file: Home.js ~ line 33 ~ init ~ incrBalance",
-      incrBalance
-    );
-    setOperations(datas);
+    setOperations(transactions);
     setBalance(incrBalance);
-  };
-
-  const deleteTx = () => {
-    db.transaction((tx) => {
-      tx.executeSql("DELETE FROM transactions"),
-        (req, res) => {
-          const results = res.rows;
-          setOperations(results);
-          console.log(operations);
-        },
-        (error) => console.log(error);
-    });
   };
 
   useFocusEffect(
     useCallback(() => {
-      init();
-      // deleteTx();
+      getAllTransactions();
     }, [])
   );
+  // useEffect(() => {
+  //   getAllTransactions();
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.balanceContainer}>
-        <Text style={styles.balance}>{balance} €</Text>
+        <Text style={styles.balance}>{Number(balance).toFixed(2)} €</Text>
       </View>
       <View style={styles.btnContainer}>
         <Pressable
@@ -77,8 +60,8 @@ export const Home = ({ navigation }) => {
         </Pressable>
       </View>
       <ScrollView style={styles.list}>
-        {operations.map((operation) => (
-          <Transaction transaction={operation} />
+        {operations.map((operation, key) => (
+          <Transaction transaction={operation} key={key} />
         ))}
       </ScrollView>
     </SafeAreaView>

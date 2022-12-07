@@ -1,24 +1,20 @@
-import { db } from "../config/database";
+import axios from "axios";
 
-export const getTx = async () => {
-  let result;
-  return new Promise((resolve, reject) => {
-    try {
-      db.transaction((tx) => {
-        tx.executeSql(
-          `SELECT * FROM transactions ORDER BY id DESC`,
-          [],
-          (sqlTx, { rows }) => {
-            result = rows._array;
-            resolve(result);
-          }
-        );
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-  // return result;
+export const createTx = async (transaction) => {
+  try {
+    const result = await axios.post(`http://localhost:5000/tx/`, transaction);
+    console.log("🚀 ~ file: transaction.js:8 ~ createTx ~ result", result);
+  } catch (error) {
+    console.log("🚀 ~ file: transaction.js:9 ~ createTx ~ error", error);
+  }
 };
 
+export const getAllTx = async () => {
+  try {
+    const result = await axios.get(`http://localhost:5000/tx/`);
+    console.log("🚀 ~ file: transaction.js:7 ~ getAllTx ~ result", result.data);
+    return result.data;
+  } catch (error) {
+    console.log("🚀 ~ file: transaction.js:8 ~ getAllTx ~ error", error);
+  }
+};

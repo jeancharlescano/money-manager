@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jccano.moneymanager"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +30,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "sdkVersion": "45.0.0"
+    "sdkVersion": "45.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "55fc7f35-8490-4033-b468-0e2bbe7855ef"
+      }
+    },
+    "owner": "jccano"
   },
   "name": "money-manager"
 }
